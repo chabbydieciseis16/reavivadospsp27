@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reavivados por su Palabra - RPSP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+
+  <!-- NAVBAR / HEADER -->
+  <header class="bg-indigo-950 text-white shadow-xl sticky top-0 z-40 border-b border-indigo-800">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-book-bible text-yellow-400 text-2xl"></i>
+        <div>
+          <span class="font-black text-lg md:text-xl tracking-wide block leading-none text-white">Reavivados por su Palabra</span>
+          <span class="text-[10px] text-yellow-400 font-semibold tracking-wider uppercase">Reina Valera 1995 (RVR95)</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="abrirModalSemanasGlobal()" class="bg-indigo-900 hover:bg-indigo-800 px-3.5 py-2 rounded-xl border border-indigo-700 text-xs font-bold transition-all flex items-center gap-2 shadow text-yellow-400">
+          <i class="fa-solid fa-calendar-days"></i>
+          <span>Semanas</span>
+        </button>
+
+        <button onclick="abrirModalUsuario()" class="flex items-center bg-indigo-900 hover:bg-indigo-800 px-3 py-1.5 rounded-xl border border-indigo-700 space-x-2 transition-all">
+          <div class="w-7 h-7 bg-yellow-400 text-indigo-950 rounded-full flex items-center justify-center font-bold text-xs">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="text-left hidden sm:block">
+            <span id="nav-nombre-user" class="text-xs font-bold block leading-tight text-white">Mi Perfil</span>
+            <span id="nav-iglesia-user" class="text-[10px] text-yellow-400 block">Sincronizar</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- BARRA DE ESTADO DE CONEXIÓN -->
+  <aside id="barra-estado-conexion" onclick="alternarConsolaDiagnostico()" class="bg-indigo-900 text-yellow-300 border-b border-indigo-700 px-4 py-2 font-semibold text-xs flex justify-between items-center cursor-pointer transition-all shadow-md">
+    <div class="flex items-center gap-2">
+      <span id="indicador-pulso-estado" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span id="texto-barra-estado">Conectando y sincronizando lección con la hoja de cálculo...</span>
+    </div>
+    <div class="flex items-center gap-2 text-[11px] font-bold">
+      <span id="lbl-cobertura-fecha" class="bg-indigo-950 px-2.5 py-1 rounded-lg text-yellow-400 border border-indigo-700">
+        Procesando lección...
+      </span>
+    </div>
+  </aside>
+
+  <!-- PANEL DE DIAGNÓSTICO DE COBERTURA -->
+  <div id="panel-diagnostico-detalles" class="hidden bg-slate-900 text-slate-200 p-4 border-b border-indigo-800 text-xs space-y-2">
+    <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+      <span class="font-bold text-yellow-400 uppercase tracking-wider">Monitor de Cobertura de Lecciones</span>
+      <span class="text-[10px] text-slate-400">ID: 1YoY7FcUmXxm9CnMrV8VJHe3sRxu4DRqbC4S8VjBDhOc</span>
+    </div>
+    <div id="log-diagnostico" class="font-mono text-[11px] leading-relaxed text-indigo-200">
+      > Iniciando consulta de lecciones...
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-grow space-y-6 w-full">
+
+    <!-- HERO BANNER -->
+    <section class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 rounded-2xl p-6 md:p-8 text-white shadow-2xl relative overflow-hidden border border-purple-800/50">
+      <div class="relative z-10 max-w-3xl">
+        
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span id="fecha-hoy-texto" class="bg-indigo-950/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-yellow-300 border border-yellow-400/30">
+            Hoy es ...
+          </span>
+          <span class="bg-yellow-400/20 text-yellow-300 border border-yellow-400/40 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+            Reina Valera 1995 (RVR95)
+          </span>
+        </div>
+        
+        <h1 class="text-2xl md:text-4xl font-extrabold tracking-tight mb-2">
+          Hoy estudiamos: <span id="capitulo-hoy-titulo" class="text-yellow-300">Cargando lección...</span>
+        </h1>
+        <p class="text-indigo-200 text-sm md:text-base mb-6 max-w-xl">
+          Lee el capítulo bíblico completo y responde el cuestionario diario de 10 preguntas.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="abrirModalLecturaActual()" class="bg-indigo-800 hover:bg-indigo-700 text-yellow-300 font-bold px-5 py-2.5 rounded-xl border border-indigo-600 shadow-lg transition-all flex items-center gap-2">
+            <i class="fa-solid fa-book-open"></i> Leer Capítulo
+          </button>
+          
+          <button onclick="iniciarJuegoActual()" class="bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-black px-5 py-2.5 rounded-xl shadow-lg transition-all flex items-center gap-2">
+            <i class="fa-solid fa-gamepad"></i> Jugar (10 Preguntas)
+          </button>
+        </div>
+      </div>
+      
+      <i class="fa-solid fa-bible absolute -right-6 -bottom-8 text-indigo-800/20 text-[180px] pointer-events-none hidden md:block"></i>
+    </section>
+
+    <!-- ESTADÍSTICAS -->
+    <section class="bg-indigo-950 rounded-2xl p-5 border border-indigo-800 shadow-xl">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-indigo-900 mb-4">
+        <h3 class="font-bold text-white text-sm flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-yellow-400"></i>
+          Puntos Acumulados y Estadísticas
+        </h3>
+        <span class="text-[11px] font-bold text-yellow-300 bg-indigo-900 px-2.5 py-1 rounded-full border border-indigo-700">Sincronizado a pestaña 'usuarios'</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-indigo-900/60 p-4 rounded-xl border border-indigo-700 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-yellow-400 uppercase tracking-wider block">Puntos Acumulados</span>
+            <span id="stat-puntos-totales" class="text-3xl font-black text-white">0 pts</span>
+            <span class="text-[11px] text-indigo-300 block">Suma continua de intentos</span>
+          </div>
+          <i class="fa-solid fa-star text-yellow-400 text-4xl"></i>
+        </div>
+
+        <div class="bg-indigo-900/60 p-4 rounded-xl border border-indigo-700 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-yellow-400 uppercase tracking-wider block">Retos Jugados</span>
+            <span id="stat-semana-partidas" class="text-3xl font-black text-white">0</span>
+            <span class="text-[11px] text-indigo-300 block">Partidas completadas</span>
+          </div>
+          <i class="fa-solid fa-gamepad text-yellow-400 text-4xl"></i>
+        </div>
+
+        <div class="bg-indigo-900/60 p-4 rounded-xl border border-indigo-700 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-yellow-400 uppercase tracking-wider block">Capítulos Leídos</span>
+            <span id="stat-semana-leidos" class="text-3xl font-black text-white">0</span>
+            <span class="text-[11px] text-indigo-300 block">Capítulos confirmados</span>
+          </div>
+          <i class="fa-solid fa-book-bookmark text-yellow-400 text-4xl"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTA SEMANA -->
+    <section>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-calendar-week text-yellow-400"></i>
+            Esta Semana
+          </h2>
+          <p class="text-xs text-indigo-300 font-medium">Bloque de siete días de Domingo a Sábado. El día activo según la fecha del sistema se destaca en amarillo.</p>
+        </div>
+      </div>
+
+      <div id="grid-semana-actual" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"></div>
+    </section>
+
+    <!-- TABLA TOP 10 -->
+    <section class="bg-indigo-950 rounded-2xl p-5 border border-indigo-800 shadow-xl">
+      <div class="flex items-center justify-between pb-3 border-b border-indigo-900 mb-4">
+        <h3 class="font-bold text-white text-base flex items-center gap-2">
+          <i class="fa-solid fa-ranking-star text-yellow-400 text-lg"></i>
+          Tabla de Posiciones - Top 10 Estudiantes
+        </h3>
+        <span class="text-[10px] text-indigo-300 uppercase font-bold">Obtenido de la pestaña 'usuarios'</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-indigo-200">
+          <thead class="bg-indigo-900/80 text-yellow-400 uppercase text-[10px] font-bold">
+            <tr>
+              <th class="p-3 rounded-l-xl">Pos.</th>
+              <th class="p-3">Estudiante</th>
+              <th class="p-3">Iglesia / Distrito</th>
+              <th class="p-3 text-center">Capítulos</th>
+              <th class="p-3 text-center">Retos</th>
+              <th class="p-3 text-right rounded-r-xl">Puntos</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-top-10-body" class="divide-y divide-indigo-900/50">
+            <tr>
+              <td colspan="6" class="p-4 text-center text-indigo-300 italic">Cargando tabla de posiciones...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-indigo-950 text-indigo-300 py-4 mt-8 border-t border-indigo-900 text-center text-xs">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <p class="font-medium text-slate-300">Reavivados por su Palabra - Guía Diaria de Estudio Bíblico</p>
+      <p class="font-bold text-yellow-400 tracking-wider uppercase">Creado por Nabby Ministerio</p>
+    </div>
+  </footer>
+
+  <!-- MODAL DE LECTURA COMPLETA -->
+  <div id="modal-lectura" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-indigo-950 text-white rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-indigo-800">
+      <div class="p-5 bg-indigo-900 text-white flex justify-between items-center border-b border-indigo-800">
+        <div>
+          <span class="text-xs font-semibold text-yellow-400 block uppercase tracking-wider">Reina Valera 1995 (RVR95)</span>
+          <h3 id="modal-titulo-capitulo" class="text-xl font-bold">Cargando...</h3>
+        </div>
+        <button onclick="cerrarModalLectura()" class="text-indigo-200 hover:text-white bg-indigo-800 p-2 rounded-full">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div id="modal-contenido-lectura" class="p-6 overflow-y-auto prose prose-invert max-w-none text-indigo-100 leading-relaxed flex-grow">
+        <p class="text-indigo-300 italic">Cargando texto del capítulo...</p>
+      </div>
+
+      <div class="p-4 bg-indigo-900/60 border-t border-indigo-800 flex flex-wrap justify-between items-center gap-3">
+        <button id="btn-confirmar-lectura-modal" onclick="confirmarLecturaModal()" class="bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-bold px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2 shadow">
+          <i id="icon-confirmar-modal" class="fa-regular fa-circle-check"></i>
+          <span id="txt-confirmar-modal">Marcar como Capítulo Leído</span>
+        </button>
+
+        <button onclick="cerrarModalLectura()" class="px-5 py-2 bg-indigo-800 text-white font-semibold rounded-xl text-sm hover:bg-indigo-700">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ORGANIZADOR DE SEMANAS -->
+  <div id="modal-semanas-global" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-indigo-950 rounded-2xl max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-indigo-800">
+      <div class="p-5 bg-indigo-900 text-white flex justify-between items-center border-b border-indigo-800">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-boxes-stacked text-yellow-400 text-xl"></i>
+          <div>
+            <h3 class="text-lg font-bold">Organizador Global de Semanas</h3>
+            <p class="text-xs text-indigo-200">Cargado dinámicamente desde Google Sheets</p>
+          </div>
+        </div>
+        <button onclick="cerrarModalSemanasGlobal()" class="text-indigo-200 hover:text-white bg-indigo-800 p-2 rounded-full">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-3 bg-indigo-900/40 border-b border-indigo-800 flex justify-center gap-2">
+        <button id="btn-filtro-actual" onclick="filtrarModalSemanas('actual')" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-yellow-400 text-indigo-950 shadow">Semana Actual</button>
+        <button id="btn-filtro-pasadas" onclick="filtrarModalSemanas('pasadas')" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-indigo-900 text-yellow-300 hover:bg-indigo-800">Semanas Pasadas</button>
+        <button id="btn-filtro-proximas" onclick="filtrarModalSemanas('proximas')" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-indigo-900 text-yellow-300 hover:bg-indigo-800">Próximas Semanas</button>
+      </div>
+
+      <div id="contenedor-cajas-semanales" class="p-6 overflow-y-auto space-y-4 flex-grow"></div>
+    </div>
+  </div>
+
+  <!-- MODAL PERFIL USUARIO -->
+  <div id="modal-usuario" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-indigo-950 text-white rounded-2xl max-w-md w-full flex flex-col shadow-2xl overflow-hidden border border-indigo-800">
+      <div class="p-5 bg-indigo-900 text-white flex justify-between items-center border-b border-indigo-800">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-id-card text-yellow-400 text-xl"></i>
+          <h3 class="text-lg font-bold">Perfil del Estudiante e Iglesia</h3>
+        </div>
+        <button onclick="cerrarModalUsuario()" class="text-indigo-200 hover:text-white bg-indigo-800 p-2 rounded-full">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-yellow-400 uppercase mb-1">Nombre Completo</label>
+          <input type="text" id="user-nombre" placeholder="Tu nombre..." class="w-full px-3 py-2 bg-indigo-900 border border-indigo-700 rounded-xl text-sm text-white focus:outline-none focus:border-yellow-400">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-yellow-400 uppercase mb-1">Iglesia</label>
+          <input type="text" id="user-iglesia" placeholder="Nombre de tu iglesia..." class="w-full px-3 py-2 bg-indigo-900 border border-indigo-700 rounded-xl text-sm text-white focus:outline-none focus:border-yellow-400">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-yellow-400 uppercase mb-1">Distrito</label>
+            <input type="text" id="user-distrito" placeholder="Distrito..." class="w-full px-3 py-2 bg-indigo-900 border border-indigo-700 rounded-xl text-sm text-white focus:outline-none focus:border-yellow-400">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-yellow-400 uppercase mb-1">Asociación</label>
+            <input type="text" id="user-asociacion" placeholder="Asociación..." class="w-full px-3 py-2 bg-indigo-900 border border-indigo-700 rounded-xl text-sm text-white focus:outline-none focus:border-yellow-400">
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-indigo-900/60 border-t border-indigo-800 flex justify-end">
+        <button onclick="guardarYEnviarPerfilASheet()" class="px-5 py-2.5 bg-yellow-400 text-indigo-950 font-black rounded-xl hover:bg-yellow-300 text-sm shadow">
+          Guardar y Sincronizar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL JUEGO DE 10 PREGUNTAS -->
+  <div id="modal-juego" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-indigo-950 text-white rounded-2xl max-w-xl w-full flex flex-col shadow-2xl overflow-hidden border border-indigo-800">
+      <div class="p-5 bg-indigo-900 text-white flex justify-between items-center border-b border-indigo-800">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-gamepad text-2xl text-yellow-400"></i>
+          <div>
+            <h3 class="text-lg font-black leading-tight">Reavivados por su Palabra</h3>
+            <p id="juego-capitulo-sub" class="text-xs text-yellow-300">Reto Bíblico Diario</p>
+          </div>
+        </div>
+        <button onclick="cerrarModalJuego()" class="text-indigo-200 hover:text-white bg-indigo-800 p-2 rounded-full">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <div class="flex justify-between items-center text-xs font-bold text-indigo-200 mb-2">
+          <span id="juego-numero-pregunta">Pregunta 1 de 10</span>
+          <span id="juego-puntos" class="text-yellow-400 font-extrabold">Puntos acumulados: 0</span>
+        </div>
+        <div class="w-full bg-indigo-900 h-2 rounded-full mb-4 overflow-hidden border border-indigo-700">
+          <div id="barra-progreso-juego" class="bg-yellow-400 h-full w-[10%] transition-all duration-300"></div>
+        </div>
+
+        <div class="inline-flex items-center bg-indigo-900 text-yellow-300 font-bold text-xs px-3 py-1 rounded-lg mb-3 border border-indigo-700">
+          <i class="fa-solid fa-bookmark mr-1.5 text-yellow-400"></i>
+          Basado en: <span id="pregunta-versiculo-base" class="ml-1 text-white">Versículo</span>
+        </div>
+
+        <h4 id="pregunta-texto" class="text-base md:text-lg font-bold text-white mb-4">
+          Cargando pregunta...
+        </h4>
+
+        <div id="contenedor-opciones" class="space-y-3"></div>
+
+        <div id="pantalla-resultados" class="hidden text-center py-6">
+          <i class="fa-solid fa-trophy text-yellow-400 text-5xl mb-3 animate-bounce"></i>
+          <h3 class="text-2xl font-extrabold text-white">¡Reto Completado!</h3>
+          <p class="text-sm text-indigo-200 mt-1">Puntos sumados a tu Score en <span class="font-bold text-yellow-400">Reavivados por su Palabra</span>.</p>
+          <div class="my-4 p-4 bg-indigo-900 border border-indigo-700 rounded-xl">
+            <p class="text-xs text-yellow-400 font-semibold uppercase">Puntuación Obtenida</p>
+            <p id="resultado-puntos-final" class="text-3xl font-black text-white">0 / 10</p>
+          </div>
+          <button onclick="reiniciarJuego()" class="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-indigo-950 font-black rounded-xl text-sm shadow">
+            Volver a Jugar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbysOmGuinoQnt3U-SwrEtrKqmtM6zp09HejpkJwAcLrAs50ZnXt8ObYNRsAHAq9zG6cOg/exec";
+    const SPREADSHEET_ID = "1YoY7FcUmXxm9CnMrV8VJHe3sRxu4DRqbC4S8VjBDhOc";
+
+    let diasAgrupadosMap = {};
+    let diaHoyActual = null;
+    let fechaHoySistemaStr = "";
+    let bloqueandoOpciones = false;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      determinarFechaSistema();
+      cargarPerfilUsuario();
+      cargarEstadisticasSemanales();
+      cargarTop10DesdeUsuariosSheet();
+      procesarYSincronizarSheet();
+    });
+
+    function registrarLog(msg) {
+      document.getElementById('log-diagnostico').innerHTML += `<br>> ${msg}`;
+    }
+
+    function alternarConsolaDiagnostico() {
+      document.getElementById('panel-diagnostico-detalles').classList.toggle('hidden');
+    }
+
+    // NORMALIZADOR FLEXIBLE DE FECHAS (Soporta DD/MM/YYYY y YYYY-MM-DD)
+    function normalizarFecha(cadena) {
+      if (!cadena) return "";
+      let str = String(cadena).trim().split('T')[0].split(' ')[0];
+      if (str.includes('/')) {
+        let p = str.split('/');
+        if (p.length === 3) {
+          if (p[0].length === 4) return `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
+          return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+        }
+      }
+      return str;
+    }
+
+    function determinarFechaSistema() {
+      const ahora = new Date();
+      const anio = ahora.getFullYear();
+      const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+      const dia = String(ahora.getDate()).padStart(2, '0');
+      fechaHoySistemaStr = `${anio}-${mes}-${dia}`;
+
+      const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const textoFechaLarga = ahora.toLocaleDateString('es-ES', opciones);
+      document.getElementById('fecha-hoy-texto').textContent = `Hoy es ${textoFechaLarga.charAt(0).toUpperCase() + textoFechaLarga.slice(1)}`;
+    }
+
+    function obtenerFechaCortaTexto(cadenaFecha) {
+      if (!cadenaFecha) return "";
+      let fStr = normalizarFecha(cadenaFecha);
+      let partes = fStr.split('-');
+      if (partes.length === 3) {
+        let fechaObj = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+        const opciones = { day: 'numeric', month: 'short', year: 'numeric' };
+        return fechaObj.toLocaleDateString('es-ES', opciones);
+      }
+      return cadenaFecha;
+    }
+
+    async function procesarYSincronizarSheet() {
+      let exito = false;
+
+      // 1. APPS SCRIPT
+      try {
+        registrarLog("Conectando con Google Apps Script API...");
+        const res = await fetch(APPS_SCRIPT_URL, { redirect: "follow" });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.status === "success" && json.data && json.data.length > 0) {
+            procesarFilasObjeto(json.data);
+            exito = true;
+            registrarLog("Lecciones procesadas desde Apps Script.");
+          }
+        }
+      } catch (e) {
+        registrarLog(`Error en Apps Script: ${e.message}`);
+      }
+
+      // 2. FALLBACK GVIZ API
+      if (!exito) {
+        try {
+          registrarLog("Conectando respaldo por GViz API...");
+          const gvizUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?sheet=K1&tqx=out:json`;
+          const resGviz = await fetch(gvizUrl);
+          if (!resGviz.ok) throw new Error("Acceso a GViz fallido.");
+
+          const text = await resGviz.text();
+          const jsonStr = text.substring(47, text.length - 2);
+          const data = JSON.parse(jsonStr);
+
+          const cols = data.table.cols.map(c => c && c.label ? c.label.toLowerCase() : '');
+          const rows = data.table.rows;
+
+          let iDia = cols.findIndex(c => c.includes('dia') || c.includes('día'));
+          let iFecha = cols.findIndex(c => c.includes('fecha'));
+          let iCap = cols.findIndex(c => c.includes('capitulo') || c.includes('capítulo'));
+          let iPreg = cols.findIndex(c => c.includes('pregunta'));
+          let iOpA = cols.findIndex(c => c.includes('opcion_a') || c.includes('opciona'));
+          let iOpB = cols.findIndex(c => c.includes('opcion_b') || c.includes('opcionb'));
+          let iOpC = cols.findIndex(c => c.includes('opcion_c') || c.includes('opcionc'));
+          let iOpD = cols.findIndex(c => c.includes('opcion_d') || c.includes('opciond'));
+          let iCorr = cols.findIndex(c => c.includes('correcta'));
+          let iExp = cols.findIndex(c => c.includes('explicacion') || c.includes('explicación'));
+          let iTexto = cols.findIndex(c => c.includes('texto_capitulo') || c.includes('texto'));
+
+          if (iDia === -1) iDia = 0;
+          if (iFecha === -1) iFecha = 1;
+          if (iCap === -1) iCap = 2;
+          if (iPreg === -1) iPreg = 3;
+          if (iOpA === -1) iOpA = 4;
+          if (iOpB === -1) iOpB = 5;
+          if (iOpC === -1) iOpC = 6;
+          if (iOpD === -1) iOpD = 7;
+          if (iCorr === -1) iCorr = 8;
+          if (iExp === -1) iExp = 9;
+          if (iTexto === -1) iTexto = 10;
+
+          const filasCrudas = rows.map(r => {
+            if (!r.c) return null;
+            const getV = (idx) => (r.c[idx] ? String(r.c[idx].f || r.c[idx].v || '').trim() : '');
+            return {
+              dia: getV(iDia),
+              fecha: getV(iFecha),
+              capitulo: getV(iCap),
+              pregunta: getV(iPreg),
+              opA: getV(iOpA),
+              opB: getV(iOpB),
+              opC: getV(iOpC),
+              opD: getV(iOpD),
+              correcta: getV(iCorr).toUpperCase(),
+              explicacion: getV(iExp),
+              textoCapitulo: getV(iTexto)
+            };
+          }).filter(x => x !== null && x.fecha !== '' && x.pregunta !== '');
+
+          procesarFilasObjeto(filasCrudas);
+          exito = true;
+          registrarLog("Lecciones procesadas desde GViz API.");
+
+        } catch (errGviz) {
+          registrarLog(`Error en respaldo GViz: ${errGviz.message}`);
+        }
+      }
+
+      if (!exito) {
+        document.getElementById('texto-barra-estado').textContent = "Error al conectar con la base de datos de lecciones";
+        document.getElementById('indicador-pulso-estado').className = "w-2.5 h-2.5 rounded-full bg-red-500";
+      }
+
+      renderizarGridSemanaActual();
+    }
+
+    // PROCESAMIENTO Y DIAGNÓSTICO DE COBERTURA
+    function procesarFilasObjeto(filasCrudas) {
+      diasAgrupadosMap = {};
+
+      filasCrudas.forEach(f => {
+        const claveFecha = normalizarFecha(f.fecha);
+        if (!claveFecha) return;
+
+        if (!diasAgrupadosMap[claveFecha]) {
+          diasAgrupadosMap[claveFecha] = {
+            diaNombre: f.dia || 'Domingo',
+            fecha: claveFecha,
+            capitulo: f.capitulo,
+            textoCapitulo: f.textoCapitulo, // Texto completo de la columna K en la 1era fila
+            preguntas: []
+          };
+        } else if (!diasAgrupadosMap[claveFecha].textoCapitulo && f.textoCapitulo) {
+          diasAgrupadosMap[claveFecha].textoCapitulo = f.textoCapitulo;
+        }
+
+        // Agrupa estrictamente máximo 10 preguntas por fecha
+        if (f.pregunta && diasAgrupadosMap[claveFecha].preguntas.length < 10) {
+          let idxCorrecto = 0;
+          if (f.correcta.includes('B') || f.correcta === '1') idxCorrecto = 1;
+          else if (f.correcta.includes('C') || f.correcta === '2') idxCorrecto = 2;
+          else if (f.correcta.includes('D') || f.correcta === '3') idxCorrecto = 3;
+
+          diasAgrupadosMap[claveFecha].preguntas.push({
+            v: f.explicacion || f.capitulo,
+            p: f.pregunta,
+            o: [f.opA, f.opB, f.opC, f.opD],
+            c: idxCorrecto
+          });
+        }
+      });
+
+      const fechasClaves = Object.keys(diasAgrupadosMap);
+      if (fechasClaves.length > 0) {
+        const primeraFecha = fechasClaves[0];
+        const ultimaFecha = fechasClaves[fechasClaves.length - 1];
+        
+        document.getElementById('lbl-cobertura-fecha').textContent = `Cargado: ${obtenerFechaCortaTexto(primeraFecha)} al ${obtenerFechaCortaTexto(ultimaFecha)}`;
+        document.getElementById('texto-barra-estado').textContent = "Lecciones y preguntas sincronizadas correctamente";
+        document.getElementById('indicador-pulso-estado').className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+
+        registrarLog(`Inicio de lecciones: ${primeraFecha} (${diasAgrupadosMap[primeraFecha].capitulo})`);
+        registrarLog(`Límite cargado en Sheet: ${ultimaFecha} (${diasAgrupadosMap[ultimaFecha].capitulo})`);
+        registrarLog(`Total de días registrados: ${fechasClaves.length}`);
+      }
+    }
+
+    function renderizarGridSemanaActual() {
+      const contenedor = document.getElementById('grid-semana-actual');
+      contenedor.innerHTML = '';
+
+      const fechaNormHoy = normalizarFecha(fechaHoySistemaStr);
+
+      if (diasAgrupadosMap[fechaNormHoy]) {
+        diaHoyActual = diasAgrupadosMap[fechaNormHoy];
+      } else {
+        const fechasClaves = Object.keys(diasAgrupadosMap);
+        if (fechasClaves.length > 0) {
+          diaHoyActual = diasAgrupadosMap[fechasClaves[0]];
+        } else {
+          diaHoyActual = { diaNombre: "Domingo", fecha: fechaNormHoy, capitulo: "Salmos 58", textoCapitulo: "", preguntas: [] };
+        }
+      }
+
+      document.getElementById('capitulo-hoy-titulo').textContent = diaHoyActual.capitulo || "Salmos 58";
+
+      // Siete días consecutivos de la semana activa
+      let listaSemana = [];
+      const partesF = fechaNormHoy.split('-');
+      const fechaHoy = new Date(parseInt(partesF[0]), parseInt(partesF[1]) - 1, parseInt(partesF[2]));
+      const diaSemanaHoy = fechaHoy.getDay(); // 0 = Domingo
+
+      const domingoActual = new Date(fechaHoy);
+      domingoActual.setDate(fechaHoy.getDate() - diaSemanaHoy);
+
+      const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(domingoActual);
+        d.setDate(domingoActual.getDate() + i);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const fKey = `${yyyy}-${mm}-${dd}`;
+
+        if (diasAgrupadosMap[fKey]) {
+          listaSemana.push(diasAgrupadosMap[fKey]);
+        } else {
+          listaSemana.push({
+            diaNombre: diasNombres[i],
+            fecha: fKey,
+            capitulo: `Salmos ${58 + i}`,
+            textoCapitulo: "",
+            preguntas: []
+          });
+        }
+      }
+
+      listaSemana.forEach((item) => {
+        const esHoy = item.fecha === fechaNormHoy;
+        const card = document.createElement('div');
+
+        if (esHoy) {
+          card.className = "p-4 rounded-2xl border-2 border-yellow-300 bg-yellow-400 text-indigo-950 shadow-xl ring-4 ring-yellow-400/30 flex flex-col justify-between transition-all transform scale-105 relative";
+        } else {
+          card.className = "p-4 rounded-2xl border border-indigo-800 bg-indigo-950 text-white shadow flex flex-col justify-between transition-all hover:border-purple-500";
+        }
+
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] font-black uppercase tracking-wider ${esHoy ? 'text-indigo-950' : 'text-yellow-400'}">
+                ${item.diaNombre}
+              </span>
+              ${esHoy ? '<span class="text-[9px] bg-indigo-950 text-yellow-300 font-black px-2 py-0.5 rounded-full uppercase shadow">HOY</span>' : ''}
+            </div>
+            <h4 class="font-extrabold text-sm my-1">${item.capitulo}</h4>
+            <span class="text-[10px] block ${esHoy ? 'text-indigo-900 font-bold' : 'text-indigo-300'}">${obtenerFechaCortaTexto(item.fecha)}</span>
+          </div>
+
+          <div class="mt-3 space-y-1.5">
+            <button onclick="abrirLecturaFecha('${item.fecha}')" class="w-full py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${esHoy ? 'bg-indigo-950 text-white hover:bg-indigo-900' : 'bg-indigo-900 text-yellow-300 hover:bg-indigo-800'}">
+              <i class="fa-solid fa-book-open text-[10px]"></i> Leer
+            </button>
+            <button onclick="iniciarJuegoFecha('${item.fecha}')" class="w-full py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 bg-yellow-400 text-indigo-950 font-black hover:bg-yellow-300 shadow">
+              <i class="fa-solid fa-gamepad text-[10px]"></i> Jugar
+            </button>
+          </div>
+        `;
+        contenedor.appendChild(card);
+      });
+    }
+
+    async function cargarTop10DesdeUsuariosSheet() {
+      const tbody = document.getElementById('tabla-top-10-body');
+      try {
+        registrarLog("Consultando tabla de posiciones...");
+        const urlUsuarios = `${APPS_SCRIPT_URL}?action=getUsuarios`;
+        const res = await fetch(urlUsuarios);
+        
+        let usuarios = [];
+
+        if (res.ok) {
+          const json = await res.json();
+          if (json.status === "success" && json.data) {
+            usuarios = json.data;
+          }
+        }
+
+        if (usuarios.length === 0) {
+          const gvizUsersUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?sheet=usuarios&tqx=out:json`;
+          const resGviz = await fetch(gvizUsersUrl);
+          if (resGviz.ok) {
+            const text = await resGviz.text();
+            const jsonStr = text.substring(47, text.length - 2);
+            const data = JSON.parse(jsonStr);
+            const rows = data.table.rows || [];
+
+            usuarios = rows.map(r => {
+              if (!r.c) return null;
+              const getV = (idx) => (r.c[idx] ? (r.c[idx].v !== null ? r.c[idx].v : '') : '');
+              return {
+                nombre: String(getV(0)).trim(),
+                iglesia: String(getV(1)).trim() || "Sin Iglesia",
+                distrito: String(getV(2)).trim() || "Sin Distrito",
+                asociacion: String(getV(3)).trim(),
+                capitulos: parseInt(getV(4)) || 0,
+                retos: parseInt(getV(5)) || 0,
+                puntos: parseInt(getV(6)) || 0
+              };
+            }).filter(u => u !== null && u.nombre !== '' && u.nombre.toLowerCase() !== 'nombre');
+
+            usuarios.sort((a, b) => b.puntos - a.puntos);
+          }
+        }
+
+        const top10 = usuarios.slice(0, 10);
+
+        if (top10.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-indigo-300 italic">No hay registros aún en la pestaña 'usuarios'. Sincroniza tu perfil para aparecer aquí.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = top10.map((u, i) => `
+          <tr class="hover:bg-indigo-900/40 transition-colors">
+            <td class="p-3 font-bold text-yellow-400">${i + 1}°</td>
+            <td class="p-3 font-bold text-white">${u.nombre}</td>
+            <td class="p-3 text-indigo-300">${u.iglesia} ${u.distrito !== 'Sin Distrito' ? '/ ' + u.distrito : ''}</td>
+            <td class="p-3 text-center font-semibold text-white">${u.capitulos}</td>
+            <td class="p-3 text-center font-semibold text-white">${u.retos}</td>
+            <td class="p-3 text-right font-black text-yellow-400">${u.puntos} pts</td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-indigo-300 italic">No se pudo cargar la tabla de usuarios.</td></tr>`;
+      }
+    }
+
+    function abrirModalSemanasGlobal() {
+      filtrarModalSemanas('actual');
+      document.getElementById('modal-semanas-global').classList.remove('hidden');
+    }
+
+    function cerrarModalSemanasGlobal() {
+      document.getElementById('modal-semanas-global').classList.add('hidden');
+    }
+
+    function filtrarModalSemanas(filtro) {
+      const cont = document.getElementById('contenedor-cajas-semanales');
+      cont.innerHTML = '';
+
+      document.getElementById('btn-filtro-actual').className = filtro === 'actual' ? "px-4 py-1.5 rounded-lg text-xs font-bold bg-yellow-400 text-indigo-950 shadow" : "px-4 py-1.5 rounded-lg text-xs font-bold bg-indigo-900 text-yellow-300 hover:bg-indigo-800";
+      document.getElementById('btn-filtro-pasadas').className = filtro === 'pasadas' ? "px-4 py-1.5 rounded-lg text-xs font-bold bg-yellow-400 text-indigo-950 shadow" : "px-4 py-1.5 rounded-lg text-xs font-bold bg-indigo-900 text-yellow-300 hover:bg-indigo-800";
+      document.getElementById('btn-filtro-proximas').className = filtro === 'proximas' ? "px-4 py-1.5 rounded-lg text-xs font-bold bg-yellow-400 text-indigo-950 shadow" : "px-4 py-1.5 rounded-lg text-xs font-bold bg-indigo-900 text-yellow-300 hover:bg-indigo-800";
+
+      const fechasClaves = Object.keys(diasAgrupadosMap);
+
+      if (fechasClaves.length === 0) {
+        cont.innerHTML = '<p class="text-indigo-300 italic text-center">Cargando lecciones...</p>';
+        return;
+      }
+
+      let bloquesSemanas = [];
+      for (let i = 0; i < fechasClaves.length; i += 7) {
+        bloquesSemanas.push(fechasClaves.slice(i, i + 7));
+      }
+
+      const fechaNormHoy = normalizarFecha(fechaHoySistemaStr);
+      let semanaActualIdx = bloquesSemanas.findIndex(b => b.includes(fechaNormHoy));
+      if (semanaActualIdx === -1) semanaActualIdx = 0;
+
+      let bloquesAMostrar = [];
+      if (filtro === 'actual') {
+        bloquesAMostrar = [bloquesSemanas[semanaActualIdx]];
+      } else if (filtro === 'pasadas') {
+        bloquesAMostrar = bloquesSemanas.slice(0, semanaActualIdx);
+      } else if (filtro === 'proximas') {
+        bloquesAMostrar = bloquesSemanas.slice(semanaActualIdx + 1);
+      }
+
+      if (bloquesAMostrar.length === 0 || !bloquesAMostrar[0]) {
+        cont.innerHTML = `<p class="text-indigo-300 italic text-center py-4">No hay semanas registradas en el filtro de ${filtro}.</p>`;
+        return;
+      }
+
+      bloquesAMostrar.forEach((bloque) => {
+        if (!bloque || bloque.length === 0) return;
+        const primerDia = diasAgrupadosMap[bloque[0]];
+        const ultimoDia = diasAgrupadosMap[bloque[bloque.length - 1]];
+
+        const caja = document.createElement('div');
+        caja.className = "bg-indigo-900/50 border border-indigo-800 rounded-2xl p-5 text-white shadow-lg";
+
+        caja.innerHTML = `
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-1 mb-3 pb-2 border-b border-indigo-800">
+            <div>
+              <span class="text-xs font-bold bg-yellow-400 text-indigo-950 px-3 py-1 rounded-full uppercase">
+                ${filtro === 'actual' ? 'Semana Actual' : 'Semana de Estudio'}
+              </span>
+              <span class="text-xs font-bold text-yellow-300 ml-2">Del ${primerDia.diaNombre} ${obtenerFechaCortaTexto(primerDia.fecha)} al ${ultimoDia.diaNombre} ${obtenerFechaCortaTexto(ultimoDia.fecha)}</span>
+            </div>
+            <span class="text-xs font-black text-white">${primerDia.capitulo} al ${ultimoDia.capitulo}</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-7 gap-2">
+            ${bloque.map(f => {
+              const d = diasAgrupadosMap[f];
+              const esHoy = d.fecha === fechaNormHoy;
+              return `
+                <div class="${esHoy ? 'bg-yellow-400 text-indigo-950 font-bold border-2 border-yellow-300 shadow-lg' : 'bg-indigo-950 text-white border border-indigo-800'} p-2.5 rounded-xl text-center cursor-pointer hover:border-yellow-400 transition-all shadow-sm" onclick="abrirLecturaFecha('${d.fecha}'); cerrarModalSemanasGlobal();">
+                  <span class="text-[9px] font-bold ${esHoy ? 'text-indigo-950' : 'text-yellow-400'} uppercase block">${d.diaNombre}</span>
+                  <span class="font-extrabold text-xs block my-0.5">${d.capitulo}</span>
+                  <span class="text-[8px] ${esHoy ? 'text-indigo-900' : 'text-indigo-300'} block">${obtenerFechaCortaTexto(d.fecha)}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+        cont.appendChild(caja);
+      });
+    }
+
+    function abrirLecturaFecha(fechaKey) {
+      const fNorm = normalizarFecha(fechaKey);
+      const item = (diasAgrupadosMap && diasAgrupadosMap[fNorm]) ? diasAgrupadosMap[fNorm] : null;
+      const modalT = document.getElementById('modal-titulo-capitulo');
+      const contL = document.getElementById('modal-contenido-lectura');
+
+      if (item && item.capitulo) {
+        modalT.textContent = item.capitulo;
+        if (item.textoCapitulo && item.textoCapitulo.trim() !== '') {
+          contL.innerHTML = `<div class="espacio-lectura-integra leading-relaxed text-indigo-100">${item.textoCapitulo}</div>`;
+        } else {
+          contL.innerHTML = `<p class="text-indigo-300 italic">No se encontró texto publicado en la columna K (texto_capitulo) para la fecha ${obtenerFechaCortaTexto(fNorm)}.</p>`;
+        }
+      } else {
+        modalT.textContent = "Salmos 58";
+        contL.innerHTML = `<p class="text-indigo-300 italic">No se encontró registro asignado para este día.</p>`;
+      }
+
+      actualizarEstadoModalConfirmar(modalT.textContent);
+      document.getElementById('modal-lectura').classList.remove('hidden');
+    }
+
+    function abrirModalLecturaActual() {
+      abrirLecturaFecha(diaHoyActual ? diaHoyActual.fecha : fechaHoySistemaStr);
+    }
+
+    function cerrarModalLectura() {
+      document.getElementById('modal-lectura').classList.add('hidden');
+    }
+
+    function confirmarLecturaModal() {
+      const capNombre = document.getElementById('modal-titulo-capitulo').textContent;
+      const clave = "stats_rpsp_user";
+      const stats = JSON.parse(localStorage.getItem(clave)) || { leidos: {}, partidas: 0, puntosTotales: 0 };
+
+      if (stats.leidos[capNombre]) {
+        delete stats.leidos[capNombre];
+      } else {
+        stats.leidos[capNombre] = true;
+      }
+
+      localStorage.setItem(clave, JSON.stringify(stats));
+      actualizarEstadoModalConfirmar(capNombre);
+      cargarEstadisticasSemanales();
+      guardarYEnviarPerfilASheet();
+    }
+
+    function actualizarEstadoModalConfirmar(capNombre) {
+      const clave = "stats_rpsp_user";
+      const stats = JSON.parse(localStorage.getItem(clave)) || { leidos: {}, partidas: 0, puntosTotales: 0 };
+      const estaLeido = !!stats.leidos[capNombre];
+
+      const btn = document.getElementById('btn-confirmar-lectura-modal');
+      const txt = document.getElementById('txt-confirmar-modal');
+
+      if (estaLeido) {
+        btn.className = "bg-yellow-400 text-indigo-950 font-black px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2 shadow";
+        txt.textContent = "¡Capítulo Leído!";
+      } else {
+        btn.className = "bg-indigo-900 hover:bg-indigo-800 text-white font-bold px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2 shadow border border-indigo-700";
+        txt.textContent = "Marcar como Capítulo Leído";
+      }
+    }
+
+    function cargarEstadisticasSemanales() {
+      const clave = "stats_rpsp_user";
+      const stats = JSON.parse(localStorage.getItem(clave)) || { leidos: {}, partidas: 0, puntosTotales: 0 };
+
+      const pts = stats.puntosTotales || 0;
+      const par = stats.partidas || 0;
+      const lei = Object.keys(stats.leidos || {}).length;
+
+      document.getElementById('stat-puntos-totales').textContent = `${pts} pts`;
+      document.getElementById('stat-semana-partidas').textContent = par;
+      document.getElementById('stat-semana-leidos').textContent = lei;
+    }
+
+    function registrarPuntuacionSemanal(puntosRonda) {
+      const clave = "stats_rpsp_user";
+      const stats = JSON.parse(localStorage.getItem(clave)) || { leidos: {}, partidas: 0, puntosTotales: 0 };
+
+      stats.partidas = (stats.partidas || 0) + 1;
+      stats.puntosTotales = (stats.puntosTotales || 0) + (puntosRonda * 10);
+
+      localStorage.setItem(clave, JSON.stringify(stats));
+      cargarEstadisticasSemanales();
+      guardarYEnviarPerfilASheet();
+    }
+
+    async function guardarYEnviarPerfilASheet() {
+      const user = {
+        nombre: document.getElementById('user-nombre').value || 'Estudiante',
+        iglesia: document.getElementById('user-iglesia').value || 'Mi Iglesia',
+        distrito: document.getElementById('user-distrito').value || 'Distrito',
+        asociacion: document.getElementById('user-asociacion').value || 'Asociación'
+      };
+      localStorage.setItem('user_rpsp_profile', JSON.stringify(user));
+      cargarPerfilUsuario();
+
+      const stats = JSON.parse(localStorage.getItem("stats_rpsp_user")) || { leidos: {}, partidas: 0, puntosTotales: 0 };
+
+      const cargaUsuario = {
+        hojaDestino: 'usuarios',
+        Nombre: user.nombre,
+        Iglesia: user.iglesia,
+        Distrito: user.distrito,
+        Asociacion: user.asociacion,
+        CapitulosLeidos: Object.keys(stats.leidos || {}).length,
+        RetosJugados: stats.partidas || 0,
+        PuntosAcumulados: stats.puntosTotales || 0
+      };
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cargaUsuario)
+        });
+        registrarLog(`Datos sincronizados en la pestaña 'usuarios'.`);
+        setTimeout(cargarTop10DesdeUsuariosSheet, 1500);
+      } catch (e) {
+        console.warn("Error enviando datos.");
+      }
+
+      cerrarModalUsuario();
+    }
+
+    function cargarPerfilUsuario() {
+      const user = JSON.parse(localStorage.getItem('user_rpsp_profile')) || {
+        nombre: 'Estudiante Bíblico', iglesia: 'Mi Iglesia', distrito: 'Distrito', asociacion: 'Asociación'
+      };
+      document.getElementById('user-nombre').value = user.nombre;
+      document.getElementById('user-iglesia').value = user.iglesia;
+      document.getElementById('user-distrito').value = user.distrito;
+      document.getElementById('user-asociacion').value = user.asociacion;
+      document.getElementById('nav-nombre-user').textContent = user.nombre;
+      document.getElementById('nav-iglesia-user').textContent = user.iglesia;
+    }
+
+    function abrirModalUsuario() { document.getElementById('modal-usuario').classList.remove('hidden'); }
+    function cerrarModalUsuario() { document.getElementById('modal-usuario').classList.add('hidden'); }
+
+    let preguntasJuego = [];
+    let indicePreguntaActual = 0;
+    let puntuacionRonda = 0;
+
+    function iniciarJuegoFecha(fechaKey) {
+      const fNorm = normalizarFecha(fechaKey);
+      const item = (diasAgrupadosMap && diasAgrupadosMap[fNorm]) ? diasAgrupadosMap[fNorm] : null;
+      if (!item || !item.preguntas || item.preguntas.length === 0) {
+        alert(`No se cargaron preguntas para el día ${obtenerFechaCortaTexto(fNorm)} en la hoja de cálculo.`);
+        return;
+      }
+
+      preguntasJuego = item.preguntas;
+      indicePreguntaActual = 0;
+      puntuacionRonda = 0;
+      bloqueandoOpciones = false;
+
+      document.getElementById('juego-capitulo-sub').textContent = `Reto Bíblico - ${item.capitulo}`;
+      document.getElementById('pantalla-resultados').classList.add('hidden');
+      document.getElementById('contenedor-opciones').classList.remove('hidden');
+      document.getElementById('pregunta-texto').classList.remove('hidden');
+
+      mostrarPreguntaJuego();
+      document.getElementById('modal-juego').classList.remove('hidden');
+    }
+
+    function iniciarJuegoActual() {
+      iniciarJuegoFecha(diaHoyActual ? diaHoyActual.fecha : fechaHoySistemaStr);
+    }
+
+    function mostrarPreguntaJuego() {
+      bloqueandoOpciones = false;
+      const q = preguntasJuego[indicePreguntaActual];
+      document.getElementById('juego-numero-pregunta').textContent = `Pregunta ${indicePreguntaActual + 1} de ${preguntasJuego.length}`;
+      document.getElementById('juego-puntos').textContent = `Puntos acumulados: ${puntuacionRonda * 10}`;
+      document.getElementById('barra-progreso-juego').style.width = `${((indicePreguntaActual + 1) / preguntasJuego.length) * 100}%`;
+
+      document.getElementById('pregunta-versiculo-base').textContent = q.v;
+      document.getElementById('pregunta-texto').textContent = q.p;
+
+      const contOpciones = document.getElementById('contenedor-opciones');
+      contOpciones.innerHTML = '';
+
+      q.o.forEach((opcion, idx) => {
+        const btn = document.createElement('button');
+        btn.id = `btn-opcion-${idx}`;
+        btn.className = "w-full text-left p-3.5 rounded-xl border border-indigo-700 bg-indigo-900 hover:bg-indigo-800 text-white font-medium text-xs md:text-sm flex justify-between items-center transition-all shadow";
+        btn.innerHTML = `<span>${opcion}</span> <i class="fa-regular fa-circle text-yellow-400"></i>`;
+        btn.onclick = () => responderPregunta(idx);
+        contOpciones.appendChild(btn);
+      });
+    }
+
+    function responderPregunta(idxSeleccionado) {
+      if (bloqueandoOpciones) return;
+      bloqueandoOpciones = true;
+
+      const q = preguntasJuego[indicePreguntaActual];
+      const esCorrecto = idxSeleccionado === q.c;
+
+      const btnSeleccionado = document.getElementById(`btn-opcion-${idxSeleccionado}`);
+      const btnCorrecto = document.getElementById(`btn-opcion-${q.c}`);
+
+      if (esCorrecto) {
+        puntuacionRonda++;
+        btnSeleccionado.className = "w-full text-left p-3.5 rounded-xl border-2 border-emerald-400 bg-emerald-600 text-white font-bold text-xs md:text-sm flex justify-between items-center transition-all shadow-lg animate-pulse";
+        btnSeleccionado.innerHTML = `<span>${q.o[idxSeleccionado]}</span> <i class="fa-solid fa-circle-check text-yellow-300 text-base"></i>`;
+      } else {
+        btnSeleccionado.className = "w-full text-left p-3.5 rounded-xl border-2 border-red-500 bg-red-600 text-white font-bold text-xs md:text-sm flex justify-between items-center transition-all shadow-lg";
+        btnSeleccionado.innerHTML = `<span>${q.o[idxSeleccionado]}</span> <i class="fa-solid fa-circle-xmark text-white text-base"></i>`;
+
+        if (btnCorrecto) {
+          btnCorrecto.className = "w-full text-left p-3.5 rounded-xl border-2 border-emerald-400 bg-emerald-700 text-white font-bold text-xs md:text-sm flex justify-between items-center transition-all shadow";
+          btnCorrecto.innerHTML = `<span>${q.o[q.c]}</span> <i class="fa-solid fa-circle-check text-yellow-300 text-base"></i>`;
+        }
+      }
+
+      setTimeout(() => {
+        indicePreguntaActual++;
+        if (indicePreguntaActual < preguntasJuego.length) {
+          mostrarPreguntaJuego();
+        } else {
+          mostrarResultadosJuego();
+        }
+      }, 1200);
+    }
+
+    function mostrarResultadosJuego() {
+      document.getElementById('contenedor-opciones').classList.add('hidden');
+      document.getElementById('pregunta-texto').classList.add('hidden');
+      document.getElementById('pantalla-resultados').classList.remove('hidden');
+
+      document.getElementById('resultado-puntos-final').textContent = `${puntuacionRonda} / ${preguntasJuego.length}`;
+      registrarPuntuacionSemanal(puntuacionRonda);
+    }
+
+    function reiniciarJuego() {
+      iniciarJuegoFecha(diaHoyActual ? diaHoyActual.fecha : fechaHoySistemaStr);
+    }
+
+    function cerrarModalJuego() {
+      document.getElementById('modal-juego').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
